@@ -11,7 +11,10 @@
 #include <unistd.h>
 
 const double FRICTION = 0.92;
-const int BASE_PARTICLE_COUNT = 10000000;
+const int BASE_PARTICLE_COUNT = 100;
+
+
+
 int msleep(long msec) {
   struct timespec ts;
   int res;
@@ -41,11 +44,20 @@ struct particle {
   double acc_y;
   double lifespan;
 };
+
+typedef struct obstacle {
+  double x;
+  double y;
+  double width;
+  double height;
+}obstacle;
+
 typedef struct worldCtx worldCtx;
 struct worldCtx {
   int screen_width;
   int screen_height;
   int particle_count;
+  int obstacle_count;
   int mouse_x;
   int mouse_y;
 };
@@ -53,6 +65,18 @@ struct worldCtx {
 void draw_pixel(int x, int y, const char pixel) {
   move(y, x);
   addch(pixel);
+}
+
+void draw_line(int x1,int y1, int x2,int y2, const char pixel){
+  float dx = x2 - x1;
+  float dy = y2 - y1;
+  float m = dy/dx;
+  for (int x = x1;x == x2;x++) {
+    float y = m * (x - x1) + y1;
+
+    draw_pixel(x,y,pixel);
+  }
+
 }
 
 void particle_update(particle *this, double delta) {
@@ -91,6 +115,9 @@ void particle_apply_force(particle *this, double x, double y) {
   this->acc_y += y;
 }
 
+void init_obstacles(obstacle *obstacles, worldCtx *world_ctx){
+  
+}
 void init_particles(particle *particles, worldCtx *world_ctx) {
 
   for (int i = 0; i < world_ctx->particle_count; i++) {
@@ -180,6 +207,9 @@ void draw_status_window(statusWindowEntry *statuses, int count) {
 int main(int argc, char *argv[]) {
   srand(time(NULL));
   particle* particles = (particle*)malloc(sizeof(particle) * BASE_PARTICLE_COUNT);
+  const int OBSTACLE_COUNT = 20;
+  obstacle* obstacles = (obstacle*)malloc(sizeof(obstacle) * OBSTACLE_COUNT);
+
   WINDOW *window = initscr();
 
   start_color();
@@ -235,6 +265,8 @@ int main(int argc, char *argv[]) {
       msleep((SIXTY_FPS_US - frame_time) / 1000);
     }
 
+
+
     statusWindowEntry status_window_entries[] = {
       (statusWindowEntry){.name = "frame time", .value = frame_time},
       (statusWindowEntry){.name = "mouse x", .value = world_ctx.mouse_x },
@@ -245,7 +277,27 @@ int main(int argc, char *argv[]) {
       (statusWindowEntry){.name = "frame diff(us)", .value = (SIXTY_FPS_US - frame_time)},
       (statusWindowEntry){.name = "particle count", .value = world_ctx.particle_count},
     };
-    draw_status_window(status_window_entries,8);
+    // draw_status_window(status_window_entries,8);
+
+    const obstacle obs = {
+      .x = 30,
+      .y = 30,
+      .width = 10,
+      .height = 10,
+    };
+    // draw_line(
+    //     obs.x,
+    //     obs.y,
+    //     obs.x + obs.width,
+    //     obs.y,
+    //     '#');
+    draw_line(
+        obs.x + obs.width,
+        obs.y,
+        obs.x + obs.width,
+        obs.y + obs.height,
+        '#');
+    // draw_line(30,30,15,30,'#');
 
     refresh();
   }
