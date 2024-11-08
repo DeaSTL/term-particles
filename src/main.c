@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 const double FRICTION = 0.92;
-const int BASE_PARTICLE_COUNT = 1000;
+const int BASE_PARTICLE_COUNT = 10000000;
 int msleep(long msec) {
   struct timespec ts;
   int res;
@@ -113,13 +113,13 @@ void update(double delta, particle *particles, worldCtx *world_ctx) {
 
     particle_apply_force(
         &particles[i],
-        dist_x * 0.001 * (particles[i].lifespan / 100),
-        dist_y * 0.001 * (particles[i].lifespan / 100));
+        dist_x * 0.001 * (particles[i].lifespan / 150),
+        dist_y * 0.001 * (particles[i].lifespan / 150));
     // Gravity
     // particle_apply_force(&particles[i], 0, 0.02);
 
     particle_update(&particles[i], delta);
-    particles[i].lifespan--;
+    particles[i].lifespan-=1;
 
     if (particles[i].lifespan < 0) {
       particles[i].x = (rand() % world_ctx->screen_width);
@@ -179,7 +179,7 @@ void draw_status_window(statusWindowEntry *statuses, int count) {
 
 int main(int argc, char *argv[]) {
   srand(time(NULL));
-  particle particles[BASE_PARTICLE_COUNT];
+  particle* particles = (particle*)malloc(sizeof(particle) * BASE_PARTICLE_COUNT);
   WINDOW *window = initscr();
 
   start_color();
@@ -204,7 +204,7 @@ int main(int argc, char *argv[]) {
   int frame_count = 0;
 
   char status_window[500];
-
+  //running keylistener thread
   pthread_t thread_id;
   // I hate this
   argsForKeyListener args_for_key_listener = {.window = window,
@@ -231,7 +231,10 @@ int main(int argc, char *argv[]) {
     double frame_time =
         (double)((pre_frame_time.tv_sec - post_frame_time.tv_sec) * 1000000 +
                  post_frame_time.tv_usec - pre_frame_time.tv_usec);
-    msleep((SIXTY_FPS_US - frame_time) / 1000);
+    if(frame_time > 0){
+      msleep((SIXTY_FPS_US - frame_time) / 1000);
+    }
+
     statusWindowEntry status_window_entries[] = {
       (statusWindowEntry){.name = "frame time", .value = frame_time},
       (statusWindowEntry){.name = "mouse x", .value = world_ctx.mouse_x },

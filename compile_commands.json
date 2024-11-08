@@ -1,22 +1,15 @@
 [
   {
     "arguments": [
-      "/usr/bin/gcc",
-      "-std=c23",
-      "-Wall",
-      "-Wextra",
-      "-pedantic",
-      "-O2",
-      "-g",
-      "-Wpedantic",
-      "-Iinclude",
+      "/usr/bin/cc",
+      "-std=gnu17",
       "-c",
       "-o",
-      "src/main.o",
-      "src/main.c"
+      "CMakeFiles/TermParticle.dir/src/main.c.o",
+      "/home/jhartway/repos/c-projects/particle-system/src/main.c"
     ],
     "directory": "/home/jhartway/repos/c-projects/particle-system",
     "file": "/home/jhartway/repos/c-projects/particle-system/src/main.c",
-    "output": "/home/jhartway/repos/c-projects/particle-system/src/main.o"
+    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/main.c.o"
   }
 ]
