@@ -4,14 +4,16 @@ project(TermParticle C)
 # Specify C17 standard
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-SET(EXECUTABLE_OUTPUT_PATH ./bin/)
+set(EXECUTABLE_OUTPUT_PATH ./bin/)
+set(CMAKE_BUILD_TYPE Debug)
 
 # Find the ncurses library
 find_package(Curses REQUIRED)
-include_directories(${CURSES_INCLUDE_DIR})
+include_directories(${CURSES_INCLUDE_DIR} ./include/)
 
 # Add the executable target
-add_executable(TermParticle ./src/main.c)  # Replace 'main.c' with your source files
+file(GLOB SOURCES "./src/*.c")
+add_executable(TermParticle ${SOURCES})  # Replace 'main.c' with your source files
 
 # Link the ncurses library to the target
 target_link_libraries(TermParticle ${CURSES_LIBRARIES} m)

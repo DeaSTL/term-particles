@@ -2,14 +2,29 @@
   {
     "arguments": [
       "/usr/bin/cc",
-      "-std=gnu17",
+      "-I/home/deastl/repos/c/term-particles/./include",
+      "-std=gnu2x",
+      "-c",
+      "-o",
+      "CMakeFiles/TermParticle.dir/src/drawlib.c.o",
+      "/home/deastl/repos/c/term-particles/src/drawlib.c"
+    ],
+    "directory": "/home/deastl/repos/c/term-particles",
+    "file": "/home/deastl/repos/c/term-particles/src/drawlib.c",
+    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/drawlib.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-I/home/deastl/repos/c/term-particles/./include",
+      "-std=gnu2x",
       "-c",
       "-o",
       "CMakeFiles/TermParticle.dir/src/main.c.o",
-      "/home/jhartway/repos/c-projects/particle-system/src/main.c"
+      "/home/deastl/repos/c/term-particles/src/main.c"
     ],
-    "directory": "/home/jhartway/repos/c-projects/particle-system",
-    "file": "/home/jhartway/repos/c-projects/particle-system/src/main.c",
-    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/main.c.o"
+    "directory": "/home/deastl/repos/c/term-particles",
+    "file": "/home/deastl/repos/c/term-particles/src/main.c",
+    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/main.c.o"
   }
 ]

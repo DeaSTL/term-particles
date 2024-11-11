@@ -1,19 +1,18 @@
 #define _POSIX_C_SOURCE 199309L
-#include <string.h>
+#include <drawlib.h>
 #include <errno.h>
 #include <math.h>
 #include <ncurses.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
 
 const double FRICTION = 0.92;
 const int BASE_PARTICLE_COUNT = 100;
-
-
 
 int msleep(long msec) {
   struct timespec ts;
@@ -50,7 +49,7 @@ typedef struct obstacle {
   double y;
   double width;
   double height;
-}obstacle;
+} obstacle;
 
 typedef struct worldCtx worldCtx;
 struct worldCtx {
@@ -61,23 +60,6 @@ struct worldCtx {
   int mouse_x;
   int mouse_y;
 };
-
-void draw_pixel(int x, int y, const char pixel) {
-  move(y, x);
-  addch(pixel);
-}
-
-void draw_line(int x1,int y1, int x2,int y2, const char pixel){
-  float dx = x2 - x1;
-  float dy = y2 - y1;
-  float m = dy/dx;
-  for (int x = x1;x == x2;x++) {
-    float y = m * (x - x1) + y1;
-
-    draw_pixel(x,y,pixel);
-  }
-
-}
 
 void particle_update(particle *this, double delta) {
   this->vel_x += this->acc_x;
@@ -97,15 +79,15 @@ void particle_draw(particle *this) {
   double total_vel = fabsf(this->vel_x) + fabsf(this->vel_y);
   if (this->lifespan > 300) {
     attron(COLOR_PAIR(1));
-    draw_pixel(roundf(this->x), roundf(this->y), '#');
+    dl_draw_pixel(roundf(this->x), roundf(this->y), '#');
     attroff(COLOR_PAIR(1));
   } else if (this->lifespan > 200) {
     attron(COLOR_PAIR(2));
-    draw_pixel(roundf(this->x), roundf(this->y), '%');
+    dl_draw_pixel(roundf(this->x), roundf(this->y), '%');
     attroff(COLOR_PAIR(2));
   } else {
     attron(COLOR_PAIR(3));
-    draw_pixel(roundf(this->x), roundf(this->y), '.');
+    dl_draw_pixel(roundf(this->x), roundf(this->y), '.');
     attroff(COLOR_PAIR(3));
   }
 }
@@ -115,9 +97,6 @@ void particle_apply_force(particle *this, double x, double y) {
   this->acc_y += y;
 }
 
-void init_obstacles(obstacle *obstacles, worldCtx *world_ctx){
-  
-}
 void init_particles(particle *particles, worldCtx *world_ctx) {
 
   for (int i = 0; i < world_ctx->particle_count; i++) {
@@ -138,15 +117,14 @@ void update(double delta, particle *particles, worldCtx *world_ctx) {
     double dist_x = target_x - particles[i].x;
     double dist_y = target_y - particles[i].y;
 
-    particle_apply_force(
-        &particles[i],
-        dist_x * 0.001 * (particles[i].lifespan / 150),
-        dist_y * 0.001 * (particles[i].lifespan / 150));
+    particle_apply_force(&particles[i],
+                         dist_x * 0.001 * (particles[i].lifespan / 150),
+                         dist_y * 0.001 * (particles[i].lifespan / 150));
     // Gravity
     // particle_apply_force(&particles[i], 0, 0.02);
 
     particle_update(&particles[i], delta);
-    particles[i].lifespan-=1;
+    particles[i].lifespan -= 1;
 
     if (particles[i].lifespan < 0) {
       particles[i].x = (rand() % world_ctx->screen_width);
@@ -164,7 +142,7 @@ void draw(particle *particles, worldCtx *world_ctx) {
   for (int i = 0; i < world_ctx->particle_count; i++) {
     particle_draw(&particles[i]);
   }
-  draw_pixel(world_ctx->mouse_x, world_ctx->mouse_y, '+');
+  dl_draw_pixel(world_ctx->mouse_x, world_ctx->mouse_y, '+');
 }
 typedef struct argsForKeyListener argsForKeyListener;
 struct argsForKeyListener {
@@ -189,7 +167,7 @@ void *listen_for_keys(void *args) {
   }
 }
 typedef struct statusWindowEntry {
-  const char* name;
+  const char *name;
   double value;
 } statusWindowEntry;
 
@@ -198,25 +176,38 @@ void draw_status_window(statusWindowEntry *statuses, int count) {
     int status_name_len = strlen(statuses[i].name);
     char status_entry_buffer[status_name_len + 50];
 
-    sprintf(status_entry_buffer,"%s: %lf\n",statuses[i].name,statuses[i].value);
-    move(1 + i,1);
+    sprintf(status_entry_buffer, "%s: %lf\n", statuses[i].name,
+            statuses[i].value);
+    move(1 + i, 1);
     printw("%s", status_entry_buffer);
   }
 }
 
 int main(int argc, char *argv[]) {
+  dl_ellipse **circles = (dl_ellipse **)calloc(20, sizeof(dl_ellipse *));
+
   srand(time(NULL));
-  particle* particles = (particle*)malloc(sizeof(particle) * BASE_PARTICLE_COUNT);
+
+  for (int i = 0; i < 100; i++) {
+    circles[i] = dl_new_ellipse((dl_ellipse){
+        .position = {.x = rand() % 40, .y = rand() % 40},
+        .pixel = 'x',
+        .resolution = 10,
+        .width = 10,
+        .height = 10,
+    });
+  }
+  particle *particles =
+      (particle *)malloc(sizeof(particle) * BASE_PARTICLE_COUNT);
   const int OBSTACLE_COUNT = 20;
-  obstacle* obstacles = (obstacle*)malloc(sizeof(obstacle) * OBSTACLE_COUNT);
+  obstacle *obstacles = (obstacle *)malloc(sizeof(obstacle) * OBSTACLE_COUNT);
 
   WINDOW *window = initscr();
 
   start_color();
-  init_color(COLOR_RED,800,400,0);
-  init_color(COLOR_YELLOW,800,400,0);
-  init_color(COLOR_BLUE,1000,600,0);
-
+  init_color(COLOR_RED, 800, 400, 0);
+  init_color(COLOR_YELLOW, 800, 400, 0);
+  init_color(COLOR_BLUE, 1000, 600, 0);
 
   init_pair(1, COLOR_RED, COLOR_BLACK);
   init_pair(2, COLOR_YELLOW, COLOR_BLACK);
@@ -233,8 +224,7 @@ int main(int argc, char *argv[]) {
   init_particles(particles, &world_ctx);
   int frame_count = 0;
 
-  char status_window[500];
-  //running keylistener thread
+  // running keylistener thread
   pthread_t thread_id;
   // I hate this
   argsForKeyListener args_for_key_listener = {.window = window,
@@ -253,52 +243,34 @@ int main(int argc, char *argv[]) {
     frame_count++;
     clear();
     move(1, 1);
-    printw(status_window);
-    update(1, particles, &world_ctx);
-    draw(particles, &world_ctx);
+    // update(1, particles, &world_ctx);
+    // draw(particles, &world_ctx);
 
     gettimeofday(&post_frame_time, NULL);
     double frame_time =
         (double)((pre_frame_time.tv_sec - post_frame_time.tv_sec) * 1000000 +
                  post_frame_time.tv_usec - pre_frame_time.tv_usec);
-    if(frame_time > 0){
+    if (frame_time > 0) {
       msleep((SIXTY_FPS_US - frame_time) / 1000);
     }
 
-
-
     statusWindowEntry status_window_entries[] = {
-      (statusWindowEntry){.name = "frame time", .value = frame_time},
-      (statusWindowEntry){.name = "mouse x", .value = world_ctx.mouse_x },
-      (statusWindowEntry){.name = "mouse y", .value = world_ctx.mouse_y },
-      (statusWindowEntry){.name = "screen width", .value = world_ctx.screen_width },
-      (statusWindowEntry){.name = "screen height", .value = world_ctx.screen_height },
-      (statusWindowEntry){.name = "target frame time", .value = SIXTY_FPS_US},
-      (statusWindowEntry){.name = "frame diff(us)", .value = (SIXTY_FPS_US - frame_time)},
-      (statusWindowEntry){.name = "particle count", .value = world_ctx.particle_count},
+        (statusWindowEntry){.name = "frame time", .value = frame_time},
+        (statusWindowEntry){.name = "mouse x", .value = world_ctx.mouse_x},
+        (statusWindowEntry){.name = "mouse y", .value = world_ctx.mouse_y},
+        (statusWindowEntry){.name = "screen width",
+                            .value = world_ctx.screen_width},
+        (statusWindowEntry){.name = "screen height",
+                            .value = world_ctx.screen_height},
+        (statusWindowEntry){.name = "target frame time", .value = SIXTY_FPS_US},
+        (statusWindowEntry){.name = "frame diff(us)",
+                            .value = (SIXTY_FPS_US - frame_time)},
+        (statusWindowEntry){.name = "particle count",
+                            .value = world_ctx.particle_count},
     };
-    // draw_status_window(status_window_entries,8);
-
-    const obstacle obs = {
-      .x = 30,
-      .y = 30,
-      .width = 10,
-      .height = 10,
-    };
-    // draw_line(
-    //     obs.x,
-    //     obs.y,
-    //     obs.x + obs.width,
-    //     obs.y,
-    //     '#');
-    draw_line(
-        obs.x + obs.width,
-        obs.y,
-        obs.x + obs.width,
-        obs.y + obs.height,
-        '#');
-    // draw_line(30,30,15,30,'#');
-
+    for (int i = 0;i<100;i++) {
+      dl_draw_ellipse(circles[i]);
+    }
     refresh();
   }
 

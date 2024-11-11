@@ -3,4 +3,6 @@ bin
 CMakeFiles
 CMakeCache.txt
 cmake_install.cmake
+.ccls-cache
 compile_commands.json
+Makefile
