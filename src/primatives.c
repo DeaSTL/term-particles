@@ -3,15 +3,15 @@
 #include <math.h>
 #include <stdlib.h>
 
-void dl_draw_pixel(int x, int y, const char pixel) {
-  if(y <= 0)return;
-  if(x <= 0)return;
-  move(y, x);
-  addch(pixel);
-}
+// void dl_draw_pixel(int x, int y, const char pixel) {
+//   if(y <= 0)return;
+//   if(x <= 0)return;
+//   move(y, x);
+//   addch(pixel);
+// }
 
 // Bresenham's line drawing algo
-void dl_draw_line(vectori point_a, vectori point_b, const char pixel) {
+void dl_draw_line(dl_screen* screen,vectori point_a, vectori point_b, short pixel) {
   int dx = abs(point_b.x - point_a.x);
   int dy = abs(point_b.y - point_a.y);
   int sx = (point_a.x < point_b.x) ? 1 : -1;
@@ -19,7 +19,7 @@ void dl_draw_line(vectori point_a, vectori point_b, const char pixel) {
   int err = dx - dy;
 
   while (1) {
-    dl_draw_pixel(point_a.x, point_a.y, pixel); // Plot the current point
+    dl_draw_pixel(screen,point_a.x, point_a.y, pixel); // Plot the current point
 
     if (point_a.x == point_b.x && point_a.y == point_b.y)
       break; // Stop if we've reached the endpoint
@@ -36,15 +36,15 @@ void dl_draw_line(vectori point_a, vectori point_b, const char pixel) {
   }
 }
 
-void dl_draw_ngon(vectori *points, int point_count, const char pixel) {
+void dl_draw_ngon(dl_screen* screen, vectori *points, int point_count, short pixel) {
   for (int i = 0; i < point_count; i++) {
     // draw_pixel(points[i].x,points[i].y,pixel);
     if (i > 0) {
-      dl_draw_line(points[i], points[i - 1], pixel);
+      dl_draw_line(screen,points[i], points[i - 1], pixel);
     }
     // // complete the shape
     if (i == point_count - 1) {
-      dl_draw_line(points[i], points[0], pixel);
+      dl_draw_line(screen,points[i], points[0], pixel);
     }
   }
 }

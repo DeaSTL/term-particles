@@ -74,76 +74,76 @@ void particle_update(particle *this, double delta) {
   this->vel_y *= FRICTION;
   this->vel_x *= FRICTION;
 }
-
-void particle_draw(particle *this) {
-  double total_vel = fabsf(this->vel_x) + fabsf(this->vel_y);
-  if (this->lifespan > 300) {
-    attron(COLOR_PAIR(1));
-    dl_draw_pixel(roundf(this->x), roundf(this->y), '#');
-    attroff(COLOR_PAIR(1));
-  } else if (this->lifespan > 200) {
-    attron(COLOR_PAIR(2));
-    dl_draw_pixel(roundf(this->x), roundf(this->y), '%');
-    attroff(COLOR_PAIR(2));
-  } else {
-    attron(COLOR_PAIR(3));
-    dl_draw_pixel(roundf(this->x), roundf(this->y), '.');
-    attroff(COLOR_PAIR(3));
-  }
-}
-
-void particle_apply_force(particle *this, double x, double y) {
-  this->acc_x += x;
-  this->acc_y += y;
-}
-
-void init_particles(particle *particles, worldCtx *world_ctx) {
-
-  for (int i = 0; i < world_ctx->particle_count; i++) {
-
-    int randx = (rand() % world_ctx->screen_width);
-    int randy = (rand() % world_ctx->screen_height);
-
-    particles[i].x = randx;
-    particles[i].y = randy;
-    particles[i].lifespan = (rand() % 100) + 300;
-  }
-}
-
-void update(double delta, particle *particles, worldCtx *world_ctx) {
-  double target_x = (double)world_ctx->mouse_x;
-  double target_y = (double)world_ctx->mouse_y;
-  for (int i = 0; i < world_ctx->particle_count; i++) {
-    double dist_x = target_x - particles[i].x;
-    double dist_y = target_y - particles[i].y;
-
-    particle_apply_force(&particles[i],
-                         dist_x * 0.001 * (particles[i].lifespan / 150),
-                         dist_y * 0.001 * (particles[i].lifespan / 150));
-    // Gravity
-    // particle_apply_force(&particles[i], 0, 0.02);
-
-    particle_update(&particles[i], delta);
-    particles[i].lifespan -= 1;
-
-    if (particles[i].lifespan < 0) {
-      particles[i].x = (rand() % world_ctx->screen_width);
-      particles[i].vel_x = 0;
-      particles[i].acc_x = 0;
-      particles[i].y = (rand() % world_ctx->screen_height);
-      particles[i].vel_y = 0;
-      particles[i].acc_y = 0;
-      particles[i].lifespan = (rand() % 100) + 300;
-    }
-  }
-}
-
-void draw(particle *particles, worldCtx *world_ctx) {
-  for (int i = 0; i < world_ctx->particle_count; i++) {
-    particle_draw(&particles[i]);
-  }
-  dl_draw_pixel(world_ctx->mouse_x, world_ctx->mouse_y, '+');
-}
+//
+// void particle_draw(particle *this) {
+//   double total_vel = fabsf(this->vel_x) + fabsf(this->vel_y);
+//   if (this->lifespan > 300) {
+//     attron(COLOR_PAIR(1));
+//     dl_draw_pixel(roundf(this->x), roundf(this->y), '#');
+//     attroff(COLOR_PAIR(1));
+//   } else if (this->lifespan > 200) {
+//     attron(COLOR_PAIR(2));
+//     dl_draw_pixel(roundf(this->x), roundf(this->y), '%');
+//     attroff(COLOR_PAIR(2));
+//   } else {
+//     attron(COLOR_PAIR(3));
+//     dl_draw_pixel(roundf(this->x), roundf(this->y), '.');
+//     attroff(COLOR_PAIR(3));
+//   }
+// }
+//
+// void particle_apply_force(particle *this, double x, double y) {
+//   this->acc_x += x;
+//   this->acc_y += y;
+// }
+//
+// void init_particles(particle *particles, worldCtx *world_ctx) {
+//
+//   for (int i = 0; i < world_ctx->particle_count; i++) {
+//
+//     int randx = (rand() % world_ctx->screen_width);
+//     int randy = (rand() % world_ctx->screen_height);
+//
+//     particles[i].x = randx;
+//     particles[i].y = randy;
+//     particles[i].lifespan = (rand() % 100) + 300;
+//   }
+// }
+//
+// void update(double delta, particle *particles, worldCtx *world_ctx) {
+//   double target_x = (double)world_ctx->mouse_x;
+//   double target_y = (double)world_ctx->mouse_y;
+//   for (int i = 0; i < world_ctx->particle_count; i++) {
+//     double dist_x = target_x - particles[i].x;
+//     double dist_y = target_y - particles[i].y;
+//
+//     particle_apply_force(&particles[i],
+//                          dist_x * 0.001 * (particles[i].lifespan / 150),
+//                          dist_y * 0.001 * (particles[i].lifespan / 150));
+//     // Gravity
+//     // particle_apply_force(&particles[i], 0, 0.02);
+//
+//     particle_update(&particles[i], delta);
+//     particles[i].lifespan -= 1;
+//
+//     if (particles[i].lifespan < 0) {
+//       particles[i].x = (rand() % world_ctx->screen_width);
+//       particles[i].vel_x = 0;
+//       particles[i].acc_x = 0;
+//       particles[i].y = (rand() % world_ctx->screen_height);
+//       particles[i].vel_y = 0;
+//       particles[i].acc_y = 0;
+//       particles[i].lifespan = (rand() % 100) + 300;
+//     }
+//   }
+// }
+//
+// void draw(particle *particles, worldCtx *world_ctx) {
+//   for (int i = 0; i < world_ctx->particle_count; i++) {
+//     particle_draw(&particles[i]);
+//   }
+//   dl_draw_pixel(world_ctx->mouse_x, world_ctx->mouse_y, '+');
+// }
 typedef struct argsForKeyListener argsForKeyListener;
 struct argsForKeyListener {
   worldCtx *world_ctx;
@@ -221,7 +221,7 @@ int main(int argc, char *argv[]) {
   world_ctx.screen_width = getmaxx(window);
   world_ctx.screen_height = getmaxy(window);
 
-  init_particles(particles, &world_ctx);
+  // init_particles(particles, &world_ctx);
   int frame_count = 0;
 
   // running keylistener thread
@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
                             .value = world_ctx.particle_count},
     };
     for (int i = 0;i<100;i++) {
-      dl_draw_ellipse(circles[i]);
+      dl_draw_ellipse(screen,circles[i]);
     }
     refresh();
   }

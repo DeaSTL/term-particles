@@ -1,7 +1,7 @@
 #ifndef DRAWLIB
 #define DRAWLIB
-const char ascii_density[] =
-    " .:-~,^\"'\\/|;!ilj+*?<>1)({}[]ItfL7JrcvnuxzYohkbdpqwm2345690s%#@";
+#define ascii_density_map_count 64
+extern const char ascii_density_map[];
 typedef struct vectord {
   float x;
   float y;
@@ -46,9 +46,9 @@ void dl_update_ellipse(dl_ellipse *ellipse);
 void dl_draw_ellipse(dl_ellipse *ellipse);
 
 // primatives
-void dl_draw_pixel(int x, int y, const char pixel);
-void dl_draw_line(vectori point_a, vectori point_b, const char pixel);
-void dl_draw_ngon(vectori *points, int point_count, const char pixel);
+void dl_draw_pixel(dl_screen* screen, int x, int y, short value);
+void dl_draw_line(dl_screen* screen,vectori point_a, vectori point_b,short pixel);
+void dl_draw_ngon(dl_screen* screen,vectori *points, int point_count, short pixel);
 void dl_print_vectori_array(vectori *points, int point_count);
 vectori *dl_translate_points(vectori *points, int point_count, vectori new_pos);
 
