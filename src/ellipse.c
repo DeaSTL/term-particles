@@ -29,13 +29,13 @@ void dl_update_ellipse(dl_ellipse *ellipse) {
   }
 }
 
-void dl_draw_ellipse(dl_ellipse *ellipse) {
+void dl_draw_ellipse(dl_screen* screen, dl_ellipse *ellipse) {
   vectori *translated_points = dl_translate_points(
       ellipse->points, ellipse->point_count,
       vectori_add(ellipse->position, (vectori){
                                          .x = ellipse->width / 2,
                                          .y = ellipse->height / 2,
                                      }));
-  dl_draw_ngon(translated_points, ellipse->point_count, ellipse->pixel);
+  dl_draw_ngon(screen,translated_points, ellipse->point_count, ellipse->pixel);
   free(translated_points);
 }

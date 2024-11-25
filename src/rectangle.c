@@ -21,6 +21,6 @@ dl_rect *dl_new_rect(dl_rect rect) {
   return new_rect;
 }
 
-void dl_draw_rect(dl_rect *rect) {
-  dl_draw_ngon(rect->points, rect->point_count, rect->pixel);
+void dl_draw_rect(dl_screen* screen, dl_rect *rect) {
+  dl_draw_ngon(screen,rect->points, rect->point_count, rect->pixel);
 }

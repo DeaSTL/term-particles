@@ -5,6 +5,7 @@ project(TermParticle C)
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(EXECUTABLE_OUTPUT_PATH ./bin/)
+set(CMAKE_CXX_FLAGS "-O3")
 set(CMAKE_BUILD_TYPE Debug)
 
 # Find the ncurses library
