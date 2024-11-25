@@ -86,6 +86,34 @@ void particle_apply_force(particle *this, float x, float y) {
   this->acc_x += x;
   this->acc_y += y;
 }
+particle particle_new(worldCtx *world_ctx) {
+  int side = (fast_rand() % 4);
+  particle new_particle = {
+    .acc_y = 0,
+    .acc_x = 0,
+    .vel_x = 0,
+    .vel_y = 0,
+    .lifespan = (fast_rand() % 100) + 200,
+  };
+  switch (side) {
+    case 0:
+      new_particle.x = (fast_rand() % world_ctx->screen_width);
+      new_particle.y = 1;
+    case 1:
+      new_particle.x = 1;
+      new_particle.y = (fast_rand() % world_ctx->screen_height);
+    case 2:
+      new_particle.x = (fast_rand() % world_ctx->screen_width);
+      new_particle.y = world_ctx->screen_height - 1;
+    case 3:
+      new_particle.x = world_ctx->screen_width - 1;
+      new_particle.y = (fast_rand() % world_ctx->screen_height);
+    default:
+      new_particle.x = 1;
+      new_particle.y = 1;
+  }
+  return new_particle;
+}
 
 void init_particles(particle *particles, worldCtx *world_ctx) {
 
@@ -94,9 +122,7 @@ void init_particles(particle *particles, worldCtx *world_ctx) {
     int randx = (fast_rand() % world_ctx->screen_width);
     int randy = (fast_rand() % world_ctx->screen_height);
 
-    particles[i].x = randx;
-    particles[i].y = randy;
-    particles[i].lifespan = (fast_rand() % 100) + 200;
+    particles[i] = particle_new(world_ctx);
   }
 }
 
@@ -117,13 +143,7 @@ void update(float delta, particle *particles, worldCtx *world_ctx) {
     particles[i].lifespan -= 1;
 
     if (particles[i].lifespan < 0) {
-      particles[i].x = (fast_rand() % world_ctx->screen_width);
-      particles[i].vel_x = 0;
-      particles[i].acc_x = 0;
-      particles[i].y = (fast_rand() % world_ctx->screen_height);
-      particles[i].vel_y = 0;
-      particles[i].acc_y = 0;
-      particles[i].lifespan = (fast_rand() % 100) + 200;
+      particles[i] = particle_new(world_ctx);
     }
   }
 }
