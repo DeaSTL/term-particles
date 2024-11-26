@@ -46,24 +46,26 @@ void dl_resize_screen(dl_screen *screen, int new_width, int new_height) {
 }
 
 void dl_swap_buffers(dl_screen *screen){
+  screen->draw_buffer_lock = 1;
   short *old_screen_buffer = screen->screen_buffer;
 
   screen->screen_buffer = screen->draw_buffer;
 
   screen->draw_buffer = old_screen_buffer;
 
+  screen->draw_buffer_lock = 0;
+
 }
 void dl_clear_screen(dl_screen *screen){
-
   for (size_t i = 0; i < screen->width * screen->height; i++) {
-    screen->draw_buffer[i] = 0;
+    dl_write_draw_buffer(screen,i,0);
   }
-
 }
 void dl_draw_screen(dl_screen *screen) {
-  
+   
   for (int x = 0; x < screen->width; x++) {
     for (int y = 0; y < screen->height; y++) {
+      while(screen->draw_buffer_lock){}
       short value =
           screen->screen_buffer[get_screen_index(x, y, screen->width, screen->height)];
 

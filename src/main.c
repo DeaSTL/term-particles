@@ -14,6 +14,7 @@
 
 const float FRICTION = 0.92;
 const int BASE_PARTICLE_COUNT = 1000000;
+//TODO: implement distributed physics loop
 const int THREAD_COUNT = 4;
 
 int msleep(long msec) {
@@ -184,11 +185,26 @@ typedef struct argsForDrawLoop {
   worldCtx* world_ctx;
 }argsForDrawLoop;
 void* draw_loop(void *args){
+  struct timeval pre_frame_time, post_frame_time;
+  const float SIXTY_FPS_US = (1.0 / 60.0) * 1000.0 * 1000.0;
   argsForDrawLoop *_args = (argsForDrawLoop* )args;
+  int frame_count = 0;
   while (1) {
+    frame_count++;
+    dl_clear_screen(_args->screen);
+    gettimeofday(&pre_frame_time, NULL);
     draw(_args->particles,_args->world_ctx);
     dl_swap_buffers(_args->screen);
     dl_draw_screen(_args->screen);
+    gettimeofday(&post_frame_time, NULL);
+    float frame_time =
+        (float)((pre_frame_time.tv_sec - post_frame_time.tv_sec) * 1000000 +
+                 post_frame_time.tv_usec - pre_frame_time.tv_usec);
+    if (frame_time > 0) {
+      msleep((SIXTY_FPS_US - frame_time) / 1000);
+    }
+    _args->world_ctx->frame_count = frame_count;
+    refresh();
   }
 }
 typedef struct statusWindowEntry {
@@ -255,7 +271,6 @@ int main(int argc, char *argv[]) {
 
   world_ctx.screen = screen;
   // init_particles(particles, &world_ctx);
-  int frame_count = 0;
 
   // running keylistener thread
   pthread_t thread_id;
@@ -265,59 +280,48 @@ int main(int argc, char *argv[]) {
   pthread_create(&thread_id, NULL, listen_for_keys,
                  (void *)&args_for_key_listener); // kms
   
-  argsForDrawLoop args_for_draw_loop = {.screen = screen};
+  argsForDrawLoop args_for_draw_loop = {
+    .screen = screen,
+    .world_ctx = &world_ctx,
+    .particles = particles
+  };
   pthread_create(&thread_id, NULL, draw_loop,
                  (void *)&args_for_draw_loop); // kms
 
-  struct timeval pre_frame_time, post_frame_time;
-  const float SIXTY_FPS_US = (1.0 / 60.0) * 1000.0 * 1000.0;
   while (1) {
 
-    gettimeofday(&pre_frame_time, NULL);
     world_ctx.screen_width = getmaxx(window);
     world_ctx.screen_height = getmaxy(window);
 
-    frame_count++;
-    dl_clear_screen(screen);
-    clear();
     move(1, 1);
     update(1,particles,&world_ctx);
     // draw(particles, &world_ctx);
     // if(frame_count % 4 == 0){
     //   dl_swap_buffers(screen);
     // }
-    gettimeofday(&post_frame_time, NULL);
-    float frame_time =
-        (float)((pre_frame_time.tv_sec - post_frame_time.tv_sec) * 1000000 +
-                 post_frame_time.tv_usec - pre_frame_time.tv_usec);
-    if (frame_time > 0) {
-      msleep((SIXTY_FPS_US - frame_time) / 1000);
-    }
 
-    statusWindowEntry status_window_entries[] = {
-        (statusWindowEntry){.name = "frame time", .value = frame_time},
-        (statusWindowEntry){.name = "mouse x", .value = world_ctx.mouse_x},
-        (statusWindowEntry){.name = "mouse y", .value = world_ctx.mouse_y},
-        (statusWindowEntry){.name = "screen width",
-                            .value = world_ctx.screen_width},
-        (statusWindowEntry){.name = "screen height",
-                            .value = world_ctx.screen_height},
-        (statusWindowEntry){.name = "target frame time", .value = SIXTY_FPS_US},
-        (statusWindowEntry){.name = "frame diff(us)",
-                            .value = (SIXTY_FPS_US - frame_time)},
-        (statusWindowEntry){.name = "particle count",
-                            .value = world_ctx.particle_count},
-    };
+    // statusWindowEntry status_window_entries[] = {
+    //     (statusWindowEntry){.name = "frame time", .value = frame_time},
+    //     (statusWindowEntry){.name = "mouse x", .value = world_ctx.mouse_x},
+    //     (statusWindowEntry){.name = "mouse y", .value = world_ctx.mouse_y},
+    //     (statusWindowEntry){.name = "screen width",
+    //                         .value = world_ctx.screen_width},
+    //     (statusWindowEntry){.name = "screen height",
+    //                         .value = world_ctx.screen_height},
+    //     (statusWindowEntry){.name = "target frame time", .value = SIXTY_FPS_US},
+    //     (statusWindowEntry){.name = "frame diff(us)",
+    //                         .value = (SIXTY_FPS_US - frame_time)},
+    //     (statusWindowEntry){.name = "particle count",
+    //                         .value = world_ctx.particle_count},
+    // };
 
-    world_ctx.frame_count = frame_count;
     // for (int i = 0;i<10;i++) {
     //   dl_draw_pixel(screen,1+i,12,frame_count % 60);
     // }
-    dl_draw_screen(screen);
+    // dl_draw_screen(screen);
     // for (int i = 0;i<100;i++) {
     //   dl_draw_ellipse(screen,circles[i]);
     // }
-    refresh();
   }
 
   return 0;

@@ -35,6 +35,7 @@ typedef struct dl_screen {
   int height;
   short *screen_buffer;
   short *draw_buffer;
+  int draw_buffer_lock;
 } dl_screen;
 
 // screen
@@ -43,6 +44,13 @@ void dl_resize_screen(dl_screen *screen, int width, int height);
 void dl_draw_screen(dl_screen *screen);
 void dl_clear_screen(dl_screen *screen);
 void dl_swap_buffers(dl_screen *screen);
+static inline void dl_write_draw_buffer(dl_screen* screen,int index, short pixel){
+  //pauses write while the draw buffer is locked
+  while(screen->draw_buffer_lock){}
+
+  screen->draw_buffer[index] = pixel;
+
+}
 
 // ellipse
 dl_ellipse *dl_new_ellipse(dl_ellipse new_ellipse);
@@ -85,7 +93,8 @@ static inline void dl_draw_pixel(dl_screen *screen, int x, int y, short pixel) {
   int index = get_screen_index(x, y, screen->width, screen->height);
   int pixel_level = interpolate_pixel_density(pixel);
   if(screen->draw_buffer[index] != pixel_level){
-    screen->draw_buffer[index] = pixel_level;
+    dl_write_draw_buffer(screen,index,pixel_level);
+    // screen->draw_buffer[index] = pixel_level;
   }
   // if(screen->screen_buffer[index] == 0){
   //

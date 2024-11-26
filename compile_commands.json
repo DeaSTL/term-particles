@@ -2,106 +2,106 @@
   {
     "arguments": [
       "/usr/bin/cc",
-      "-I/home/deastl/repos/c/term-particles/./include",
+      "-I/home/jhartway/repos/c-projects/particle-system/./include",
       "-g",
       "-std=gnu2x",
       "-c",
       "-o",
       "CMakeFiles/TermParticle.dir/src/drawlib.c.o",
-      "/home/deastl/repos/c/term-particles/src/drawlib.c"
+      "/home/jhartway/repos/c-projects/particle-system/src/drawlib.c"
     ],
-    "directory": "/home/deastl/repos/c/term-particles",
-    "file": "/home/deastl/repos/c/term-particles/src/drawlib.c",
-    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/drawlib.c.o"
+    "directory": "/home/jhartway/repos/c-projects/particle-system",
+    "file": "/home/jhartway/repos/c-projects/particle-system/src/drawlib.c",
+    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/drawlib.c.o"
   },
   {
     "arguments": [
       "/usr/bin/cc",
-      "-I/home/deastl/repos/c/term-particles/./include",
+      "-I/home/jhartway/repos/c-projects/particle-system/./include",
       "-g",
       "-std=gnu2x",
       "-c",
       "-o",
       "CMakeFiles/TermParticle.dir/src/ellipse.c.o",
-      "/home/deastl/repos/c/term-particles/src/ellipse.c"
+      "/home/jhartway/repos/c-projects/particle-system/src/ellipse.c"
     ],
-    "directory": "/home/deastl/repos/c/term-particles",
-    "file": "/home/deastl/repos/c/term-particles/src/ellipse.c",
-    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/ellipse.c.o"
+    "directory": "/home/jhartway/repos/c-projects/particle-system",
+    "file": "/home/jhartway/repos/c-projects/particle-system/src/ellipse.c",
+    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/ellipse.c.o"
   },
   {
     "arguments": [
       "/usr/bin/cc",
-      "-I/home/deastl/repos/c/term-particles/./include",
+      "-I/home/jhartway/repos/c-projects/particle-system/./include",
       "-g",
       "-std=gnu2x",
       "-c",
       "-o",
       "CMakeFiles/TermParticle.dir/src/main.c.o",
-      "/home/deastl/repos/c/term-particles/src/main.c"
+      "/home/jhartway/repos/c-projects/particle-system/src/main.c"
     ],
-    "directory": "/home/deastl/repos/c/term-particles",
-    "file": "/home/deastl/repos/c/term-particles/src/main.c",
-    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/main.c.o"
+    "directory": "/home/jhartway/repos/c-projects/particle-system",
+    "file": "/home/jhartway/repos/c-projects/particle-system/src/main.c",
+    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/main.c.o"
   },
   {
     "arguments": [
       "/usr/bin/cc",
-      "-I/home/deastl/repos/c/term-particles/./include",
+      "-I/home/jhartway/repos/c-projects/particle-system/./include",
       "-g",
       "-std=gnu2x",
       "-c",
       "-o",
       "CMakeFiles/TermParticle.dir/src/physicslib.c.o",
-      "/home/deastl/repos/c/term-particles/src/physicslib.c"
+      "/home/jhartway/repos/c-projects/particle-system/src/physicslib.c"
     ],
-    "directory": "/home/deastl/repos/c/term-particles",
-    "file": "/home/deastl/repos/c/term-particles/src/physicslib.c",
-    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/physicslib.c.o"
+    "directory": "/home/jhartway/repos/c-projects/particle-system",
+    "file": "/home/jhartway/repos/c-projects/particle-system/src/physicslib.c",
+    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/physicslib.c.o"
   },
   {
     "arguments": [
       "/usr/bin/cc",
-      "-I/home/deastl/repos/c/term-particles/./include",
+      "-I/home/jhartway/repos/c-projects/particle-system/./include",
       "-g",
       "-std=gnu2x",
       "-c",
       "-o",
       "CMakeFiles/TermParticle.dir/src/primatives.c.o",
-      "/home/deastl/repos/c/term-particles/src/primatives.c"
+      "/home/jhartway/repos/c-projects/particle-system/src/primatives.c"
     ],
-    "directory": "/home/deastl/repos/c/term-particles",
-    "file": "/home/deastl/repos/c/term-particles/src/primatives.c",
-    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/primatives.c.o"
+    "directory": "/home/jhartway/repos/c-projects/particle-system",
+    "file": "/home/jhartway/repos/c-projects/particle-system/src/primatives.c",
+    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/primatives.c.o"
   },
   {
     "arguments": [
       "/usr/bin/cc",
-      "-I/home/deastl/repos/c/term-particles/./include",
+      "-I/home/jhartway/repos/c-projects/particle-system/./include",
       "-g",
       "-std=gnu2x",
       "-c",
       "-o",
       "CMakeFiles/TermParticle.dir/src/rectangle.c.o",
-      "/home/deastl/repos/c/term-particles/src/rectangle.c"
+      "/home/jhartway/repos/c-projects/particle-system/src/rectangle.c"
     ],
-    "directory": "/home/deastl/repos/c/term-particles",
-    "file": "/home/deastl/repos/c/term-particles/src/rectangle.c",
-    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/rectangle.c.o"
+    "directory": "/home/jhartway/repos/c-projects/particle-system",
+    "file": "/home/jhartway/repos/c-projects/particle-system/src/rectangle.c",
+    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/rectangle.c.o"
   },
   {
     "arguments": [
       "/usr/bin/cc",
-      "-I/home/deastl/repos/c/term-particles/./include",
+      "-I/home/jhartway/repos/c-projects/particle-system/./include",
       "-g",
       "-std=gnu2x",
       "-c",
       "-o",
       "CMakeFiles/TermParticle.dir/src/screen.c.o",
-      "/home/deastl/repos/c/term-particles/src/screen.c"
+      "/home/jhartway/repos/c-projects/particle-system/src/screen.c"
     ],
-    "directory": "/home/deastl/repos/c/term-particles",
-    "file": "/home/deastl/repos/c/term-particles/src/screen.c",
-    "output": "/home/deastl/repos/c/term-particles/CMakeFiles/TermParticle.dir/src/screen.c.o"
+    "directory": "/home/jhartway/repos/c-projects/particle-system",
+    "file": "/home/jhartway/repos/c-projects/particle-system/src/screen.c",
+    "output": "/home/jhartway/repos/c-projects/particle-system/CMakeFiles/TermParticle.dir/src/screen.c.o"
   }
 ]
