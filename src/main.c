@@ -14,6 +14,7 @@
 
 const float FRICTION = 0.92;
 const int BASE_PARTICLE_COUNT = 1000000;
+const int THREAD_COUNT = 4;
 
 int msleep(long msec) {
   struct timespec ts;
@@ -79,7 +80,7 @@ void particle_update(particle *this, double delta) {
 }
 
 void particle_draw(dl_screen* screen,particle *this) {
-  dl_draw_pixel(screen,floor(this->x), floor(this->y),255 / (fabsf(this->vel_x) + fabsf(this->vel_y)));
+  dl_draw_pixel(screen,floor(this->x), floor(this->y),60 / (fabsf(this->vel_x) + fabsf(this->vel_y)));
 }
 
 void particle_apply_force(particle *this, float x, float y) {
@@ -93,24 +94,25 @@ particle particle_new(worldCtx *world_ctx) {
     .acc_x = 0,
     .vel_x = 0,
     .vel_y = 0,
-    .lifespan = (fast_rand() % 100) + 200,
+    .lifespan = (fast_rand() % 100) + 100,
   };
   switch (side) {
     case 0:
       new_particle.x = (fast_rand() % world_ctx->screen_width);
-      new_particle.y = 1;
+      new_particle.y = 0;
+      break;
     case 1:
-      new_particle.x = 1;
+      new_particle.x = 0;
       new_particle.y = (fast_rand() % world_ctx->screen_height);
+      break;
     case 2:
       new_particle.x = (fast_rand() % world_ctx->screen_width);
-      new_particle.y = world_ctx->screen_height - 1;
+      new_particle.y = world_ctx->screen_height;
+      break;
     case 3:
-      new_particle.x = world_ctx->screen_width - 1;
+      new_particle.x = world_ctx->screen_width;
       new_particle.y = (fast_rand() % world_ctx->screen_height);
-    default:
-      new_particle.x = 1;
-      new_particle.y = 1;
+      break;
   }
   return new_particle;
 }
@@ -176,6 +178,19 @@ void *listen_for_keys(void *args) {
     }
   }
 }
+typedef struct argsForDrawLoop {
+  dl_screen *screen;
+  particle* particles;
+  worldCtx* world_ctx;
+}argsForDrawLoop;
+void* draw_loop(void *args){
+  argsForDrawLoop *_args = (argsForDrawLoop* )args;
+  while (1) {
+    draw(_args->particles,_args->world_ctx);
+    dl_swap_buffers(_args->screen);
+    dl_draw_screen(_args->screen);
+  }
+}
 typedef struct statusWindowEntry {
   const char *name;
   float value;
@@ -212,7 +227,7 @@ int main(int argc, char *argv[]) {
   particle *particles =
       (particle *)malloc(sizeof(particle) * BASE_PARTICLE_COUNT);
   const int OBSTACLE_COUNT = 20;
-  obstacle *obstacles = (obstacle *)malloc(sizeof(obstacle) * OBSTACLE_COUNT);
+  // obstacle *obstacles = (obstacle *)malloc(sizeof(obstacle) * OBSTACLE_COUNT);
 
   WINDOW *window = initscr();
 
@@ -249,6 +264,10 @@ int main(int argc, char *argv[]) {
                                               .world_ctx = &world_ctx};
   pthread_create(&thread_id, NULL, listen_for_keys,
                  (void *)&args_for_key_listener); // kms
+  
+  argsForDrawLoop args_for_draw_loop = {.screen = screen};
+  pthread_create(&thread_id, NULL, draw_loop,
+                 (void *)&args_for_draw_loop); // kms
 
   struct timeval pre_frame_time, post_frame_time;
   const float SIXTY_FPS_US = (1.0 / 60.0) * 1000.0 * 1000.0;
@@ -263,8 +282,10 @@ int main(int argc, char *argv[]) {
     clear();
     move(1, 1);
     update(1,particles,&world_ctx);
-    draw(particles, &world_ctx);
-
+    // draw(particles, &world_ctx);
+    // if(frame_count % 4 == 0){
+    //   dl_swap_buffers(screen);
+    // }
     gettimeofday(&post_frame_time, NULL);
     float frame_time =
         (float)((pre_frame_time.tv_sec - post_frame_time.tv_sec) * 1000000 +
